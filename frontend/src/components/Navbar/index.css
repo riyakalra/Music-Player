@@ -1,0 +1,27 @@
+.navbar {
+    display: flex;
+    background-color: #FFF2EB;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.navbar-logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .navbar-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+  }
