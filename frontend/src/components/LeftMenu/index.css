@@ -22,6 +22,7 @@
   
   .left-menu-item {
     cursor: pointer;
+    text-decoration: none;
     padding: 1rem 3rem;
     color: #606060;
     transition: background-color 0.2s ease;
@@ -33,6 +34,11 @@
   .left-menu-item:hover {
     background-color: #efc9cb;
   }
+
+  .left-menu-item.active {
+    border-right: 8px solid #efc9cb;
+  }
+  
   
   .left-menu-section {
     margin-bottom: 2rem;

@@ -1,4 +1,4 @@
-import "./index.css";
+import { NavLink } from "react-router-dom";
 import {
   HomeIcon,
   HeartIcon,
@@ -6,6 +6,7 @@ import {
   MusicalNoteIcon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
+import "./index.css";
 import { useState } from "react";
 
 export default function LeftMenu() {
@@ -13,7 +14,6 @@ export default function LeftMenu() {
 
   return (
     <>
-      {/* Hamburger button for mobile */}
       <button
         className="menu-toggle"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -26,13 +26,28 @@ export default function LeftMenu() {
         <div className="left-menu-section">
           <h2 className="left-menu-heading">MENU</h2>
           <ul className="left-menu-list">
-            <li className="left-menu-item">
-              <HomeIcon className="left-menu-icon" />
-              Home
+            <li>
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                  `left-menu-item ${isActive ? "active" : ""}`
+                }
+              >
+                <HomeIcon className="left-menu-icon" />
+                Home
+              </NavLink>
             </li>
-            <li className="left-menu-item">
-              <GlobeAltIcon className="left-menu-icon" />
-              Explore
+            <li>
+              <NavLink
+                to="/explore"
+                className={({ isActive }) =>
+                  `left-menu-item ${isActive ? "active" : ""}`
+                }
+              >
+                <GlobeAltIcon className="left-menu-icon" />
+                Explore
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -40,13 +55,27 @@ export default function LeftMenu() {
         <div className="left-menu-section">
           <h2 className="left-menu-heading">LIBRARY</h2>
           <ul className="left-menu-list">
-            <li className="left-menu-item">
-              <HeartIcon className="left-menu-icon" />
-              Favourites
+            <li>
+              <NavLink
+                to="/favourites"
+                className={({ isActive }) =>
+                  `left-menu-item ${isActive ? "active" : ""}`
+                }
+              >
+                <HeartIcon className="left-menu-icon" />
+                Favourites
+              </NavLink>
             </li>
-            <li className="left-menu-item">
-              <MusicalNoteIcon className="left-menu-icon" />
-              My Playlists
+            <li>
+              <NavLink
+                to="/playlists"
+                className={({ isActive }) =>
+                  `left-menu-item ${isActive ? "active" : ""}`
+                }
+              >
+                <MusicalNoteIcon className="left-menu-icon" />
+                My Playlists
+              </NavLink>
             </li>
           </ul>
         </div>

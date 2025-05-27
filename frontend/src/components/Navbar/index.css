@@ -5,6 +5,7 @@
     background-color: #ffedef;
     padding: 0.8rem 2rem;
     border-bottom: 1px solid #facbcb;
+    position: sticky;
   }
 
   .navbar-logo {
