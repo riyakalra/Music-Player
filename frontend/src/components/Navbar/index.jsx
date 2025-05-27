@@ -12,7 +12,7 @@ export default function Navbar() {
         <div className="navbar-logo">MelodyHub</div>
       </div>
 
-      <div className="navbar-section center">
+      <div className="navbar-section center desktop-search">
         <div className="navbar-search">
           <MagnifyingGlassIcon className="search-icon" />
           <input
@@ -24,6 +24,14 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-section right">
+        <div className="navbar-search mobile-search">
+          <MagnifyingGlassIcon className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search"
+            className="search-input"
+          />
+        </div>
         <div className="navbar-avatar">{initial}</div>
       </div>
     </nav>
