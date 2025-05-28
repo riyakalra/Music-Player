@@ -1,7 +1,9 @@
 import "./index.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import MoodCard from "../../components/MoodCard";
+import { fetchSongsByMood } from "../../utils/spotifyAPI";
+import SongsList from "../../components/SongsList";
 
 const moods = [
   { name: "Happy", image: "/images/happy.jpg" },
@@ -13,8 +15,20 @@ const moods = [
 
 export default function Home() {
   const [selectedMood, setSelectedMood] = useState(null);
+  const [songs, setSongs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleBack = () => setSelectedMood(null);
+
+  useEffect(() => {
+    if (selectedMood) {
+      setLoading(true);
+      fetchSongsByMood(selectedMood).then((data) => {
+        setSongs(data);
+        setLoading(false);
+      });
+    }
+  }, [selectedMood]);
 
   return (
     <div className="home-page">
@@ -22,7 +36,7 @@ export default function Home() {
         <>
           <h1 className="home-title">What's your vibe today?</h1>
           <div className="mood-card-container">
-          {moods.map((mood) => (
+            {moods.map((mood) => (
               <MoodCard key={mood.name} mood={mood} onClick={setSelectedMood} />
             ))}
           </div>
@@ -31,11 +45,11 @@ export default function Home() {
         <>
           <div className="mood-header">
             <ChevronLeftIcon className="back-icon" onClick={handleBack} />
-            <h2>{selectedMood}</h2>
+            <h2>{selectedMood} Songs</h2>
           </div>
-          <div className="songs-list">
-            <p>Songs for {selectedMood} mood will appear here.</p>
-          </div>
+
+          {loading ? <p>Loading songs...</p> : 
+          <SongsList songs={songs} />}
         </>
       )}
     </div>
