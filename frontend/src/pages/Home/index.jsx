@@ -1,6 +1,7 @@
 import "./index.css";
 import { useState } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
+import MoodCard from "../../components/MoodCard";
 
 const moods = [
   { name: "Happy", image: "/images/happy.jpg" },
@@ -21,15 +22,8 @@ export default function Home() {
         <>
           <h1 className="home-title">What's your vibe today?</h1>
           <div className="mood-card-container">
-            {moods.map((mood) => (
-              <div
-                key={mood.name}
-                className="mood-card"
-                style={{ backgroundImage: `url(${mood.image})` }}
-                onClick={() => setSelectedMood(mood.name)}
-              >
-                <span className="mood-card-label">{mood.name}</span>
-              </div>
+          {moods.map((mood) => (
+              <MoodCard key={mood.name} mood={mood} onClick={setSelectedMood} />
             ))}
           </div>
         </>
