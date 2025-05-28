@@ -5,6 +5,7 @@ import MoodCard from "../../components/MoodCard";
 import { fetchSongsByMood } from "../../utils/spotifyAPI";
 import SongsList from "../../components/SongsList";
 import Loader from "../../components/Loader";
+import SongPlayer from "../../components/SongPlayer";
 
 const moods = [
   { name: "Happy", image: "/images/happy.jpg" },
@@ -18,8 +19,8 @@ export default function Home() {
   const [selectedMood, setSelectedMood] = useState(null);
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
 
-  // Load mood from localStorage on initial mount
   useEffect(() => {
     const savedMood = localStorage.getItem("selectedMood");
     if (savedMood) {
@@ -27,7 +28,6 @@ export default function Home() {
     }
   }, []);
 
-  // When selectedMood changes, fetch songs and store in localStorage
   useEffect(() => {
     if (selectedMood) {
       localStorage.setItem("selectedMood", selectedMood);
@@ -41,7 +41,7 @@ export default function Home() {
 
   const handleBack = () => {
     setSelectedMood(null);
-    localStorage.removeItem("selectedMood"); // Clear saved mood on back
+    localStorage.removeItem("selectedMood");
   };
 
   return (
@@ -62,7 +62,14 @@ export default function Home() {
             <h2>{selectedMood} Songs</h2>
           </div>
 
-          {loading ? <Loader/> : <SongsList songs={songs} />}
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              <SongsList setCurrentSong={setCurrentSong} songs={songs} />
+              {currentSong && <SongPlayer song={currentSong} />}
+            </>
+          )}
         </>
       )}
     </div>
