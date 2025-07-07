@@ -8,6 +8,13 @@ export default function MusicPlayer({ song }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if(song && audioRef.current) {
+      audioRef.current.src = song.url;
+      setIsPlaying(true);
+    }
+  },[song]);
+
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.play();

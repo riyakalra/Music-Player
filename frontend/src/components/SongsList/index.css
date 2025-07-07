@@ -15,8 +15,31 @@
     text-align: left;       
     padding: 14px 20px;      
     vertical-align: middle;
+    font-size: 14px;
+    color: #333;
   }
-  
+
+.song-table th:nth-child(1),
+.song-table td:nth-child(1) {
+  width: 40px;
+}
+
+.song-table th:nth-child(2),
+.song-table td:nth-child(2) {
+  width: 300px;
+  cursor: pointer;
+}
+
+.song-table th:nth-child(3),
+.song-table td:nth-child(3) {
+  width: 200px;
+}
+
+.song-table th:nth-child(5),
+.song-table td:nth-child(5) {
+  width: 40px; 
+}
+
   .song-table thead {
     color: #333;
   }
@@ -48,5 +71,4 @@
   
   .song-table tbody tr:hover {
     background-color: #F6DBDC;
-    cursor: pointer;
   }

@@ -2,7 +2,7 @@ import "./index.css";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import MoodCard from "../../components/MoodCard";
-import { fetchSongsByMood } from "../../utils/spotifyAPI";
+import { fetchSongsByMood } from "../../utils/songsAPI";
 import SongsList from "../../components/SongsList";
 import Loader from "../../components/Loader";
 import SongPlayer from "../../components/SongPlayer";
@@ -41,6 +41,7 @@ export default function Home() {
 
   const handleBack = () => {
     setSelectedMood(null);
+    setCurrentSong(null);
     localStorage.removeItem("selectedMood");
   };
 
