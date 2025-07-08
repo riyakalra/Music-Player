@@ -1,0 +1,49 @@
+.home-title {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.home-page {
+    overflow-y: hidden;
+}
+
+  .mood-header {
+    display: flex;
+    align-items: center;
+  }
+
+  .back-icon {
+    margin-right: 1rem;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    color: #444;
+  }
+  
+  .songs-list {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+   h2 {
+    color: #444444;
+   }
+
+   .home-subheading {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 auto;
+  }
+
+  .mood-card-container:first-of-type {
+    margin: 50px 0;
+  }
+
+  .mood-card-container {
+    margin: 30px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+  }
+  
