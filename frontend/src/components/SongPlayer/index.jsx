@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { PlayIcon, PauseIcon, SpeakerWaveIcon, SpeakerXMarkIcon, HeartIcon } from "@heroicons/react/24/solid";
+import {
+  PlayIcon,
+  PauseIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+  HeartIcon,
+} from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import "./index.css";
 
@@ -8,32 +14,68 @@ export default function MusicPlayer({ song }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {
     if (song && audioRef.current) {
       audioRef.current.src = song.url;
+      audioRef.current.muted = false;
+
       setIsPlaying(true);
+      setIsMuted(false);
+      setProgress(0);
+      setIsFavourite(song.isFavourite);
     }
   }, [song]);
 
+  // Sync playback/mute with state
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
+
       if (isPlaying) {
-        audioRef.current.play();
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn("Playback failed:", err);
+            setIsPlaying(false);
+          });
+        }
       } else {
         audioRef.current.pause();
       }
     }
   }, [isPlaying, isMuted]);
 
-  const togglePlayPause = () => setIsPlaying(!isPlaying);
-  const toggleMute = () => setIsMuted(!isMuted);
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => {
+      const newState = !prev;
+      if (audioRef.current) {
+        if (newState) {
+          audioRef.current.play().catch((err) => {
+            console.error("Play failed:", err);
+          });
+        } else {
+          audioRef.current.pause();
+        }
+      }
+      return newState;
+    });
+  };
+
+  const toggleMute = () => {
+    setIsMuted((prev) => {
+      const newMuted = !prev;
+      if (audioRef.current) {
+        audioRef.current.muted = newMuted;
+      }
+      return newMuted;
+    });
+  };
+
   const toggleFavourite = () => {
-    if (song) {
-      song.isFavourite = !song.isFavourite;
-      //todo: update song state in context
-    }
+    setIsFavourite((prev) => !prev);
+    // TODO: Update global state or persist favourite
   };
 
   const onTimeUpdate = () => {
@@ -58,6 +100,7 @@ export default function MusicPlayer({ song }) {
         src={song.url}
         onTimeUpdate={onTimeUpdate}
         onEnded={() => setIsPlaying(false)}
+        autoPlay
       />
 
       {/* Left: Song Info */}
@@ -71,8 +114,16 @@ export default function MusicPlayer({ song }) {
 
       {/* Center: Controls */}
       <div className="player-controls">
-        <button onClick={togglePlayPause} className="play-pause-btn" aria-label={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? <PauseIcon className="icon" /> : <PlayIcon className="icon" />}
+        <button
+          onClick={togglePlayPause}
+          className="play-pause-btn"
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? (
+            <PauseIcon className="icon" />
+          ) : (
+            <PlayIcon className="icon" />
+          )}
         </button>
         <input
           type="range"
@@ -90,8 +141,16 @@ export default function MusicPlayer({ song }) {
 
       {/* Right: Actions */}
       <div className="player-actions">
-        {song.isFavourite? <HeartIcon className="favourite-icon" onClick={toggleFavourite}/> : <HeartIconOutline className="action-icon" onClick={toggleFavourite}/>}
-        <button onClick={toggleMute} className="mute-btn" aria-label="Mute">
+        {isFavourite ? (
+          <HeartIcon className="favourite-icon" onClick={toggleFavourite} />
+        ) : (
+          <HeartIconOutline className="action-icon" onClick={toggleFavourite} />
+        )}
+        <button
+          onClick={toggleMute}
+          className="mute-btn"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
           {isMuted ? (
             <SpeakerXMarkIcon className="action-icon" />
           ) : (
