@@ -34,7 +34,6 @@ export default function Home() {
 
   const handleBack = () => {
     setSelectedPlaylist(null);
-    setCurrentSong(null);
     localStorage.removeItem("selectedPlaylist");
   };
 
@@ -79,11 +78,11 @@ export default function Home() {
           ) : (
             <>
               <SongsList setCurrentSong={setCurrentSong} songs={songs} />
-              {currentSong && <SongPlayer song={currentSong} />}
             </>
           )}
         </>
       )}
+       {currentSong && <SongPlayer song={currentSong} />}
     </div>
   );
 }
