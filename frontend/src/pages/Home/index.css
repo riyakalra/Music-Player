@@ -28,3 +28,22 @@
    h2 {
     color: #444444;
    }
+
+   .home-subheading {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 auto;
+  }
+
+  .mood-card-container:first-of-type {
+    margin: 50px 0;
+  }
+
+  .mood-card-container {
+    margin: 30px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+  }
+  

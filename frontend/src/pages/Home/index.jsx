@@ -1,66 +1,77 @@
 import "./index.css";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import MoodCard from "../../components/MoodCard";
-import { fetchSongsByMood } from "../../utils/songsAPI";
+import PlaylistCard from "../../components/PlaylistCard";
+import { fetchSongsByPlaylist } from "../../utils/songsAPI";
 import SongsList from "../../components/SongsList";
 import Loader from "../../components/Loader";
 import SongPlayer from "../../components/SongPlayer";
-
-const moods = [
-  { name: "Happy", image: "/images/happy.jpg" },
-  { name: "Chill", image: "/images/chill.jpg" },
-  { name: "Sad", image: "/images/sad.jpg" },
-  { name: "Workout", image: "/images/workout.jpg" },
-  { name: "Dance", image: "/images/dance.jpg" },
-];
+import { allPlaylists } from "../../utils/playlistData";
 
 export default function Home() {
-  const [selectedMood, setSelectedMood] = useState(null);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
 
   useEffect(() => {
-    const savedMood = localStorage.getItem("selectedMood");
-    if (savedMood) {
-      setSelectedMood(savedMood);
+    const savedPlaylist = localStorage.getItem("selectedPlaylist");
+    if (savedPlaylist) {
+      setSelectedPlaylist(savedPlaylist);
     }
   }, []);
 
   useEffect(() => {
-    if (selectedMood) {
-      localStorage.setItem("selectedMood", selectedMood);
+    if (selectedPlaylist) {
+      localStorage.setItem("selectedPlaylist", selectedPlaylist);
       setLoading(true);
-      fetchSongsByMood(selectedMood).then((data) => {
+      fetchSongsByPlaylist(selectedPlaylist).then((data) => {
         setSongs(data);
         setLoading(false);
       });
     }
-  }, [selectedMood]);
+  }, [selectedPlaylist]);
 
   const handleBack = () => {
-    setSelectedMood(null);
+    setSelectedPlaylist(null);
     setCurrentSong(null);
-    localStorage.removeItem("selectedMood");
+    localStorage.removeItem("selectedPlaylist");
   };
 
   return (
     <div className="home-page">
-      {!selectedMood ? (
+      {!selectedPlaylist ? (
         <>
           <h1 className="home-title">What's your vibe today?</h1>
           <div className="mood-card-container">
-            {moods.map((mood) => (
-              <MoodCard key={mood.name} mood={mood} onClick={setSelectedMood} />
-            ))}
+            {allPlaylists
+              .filter((playlist) => playlist.topCharts === false)
+              .map((playlist) => (
+                <PlaylistCard
+                  key={playlist.name}
+                  playlist={playlist}
+                  onClick={setSelectedPlaylist}
+                />
+              ))}
+          </div>
+          <h2 className="home-subheading">Top Charts</h2>
+          <div className="mood-card-container">
+            {allPlaylists
+              .filter((playlist) => playlist.topCharts)
+              .map((playlist) => (
+                <PlaylistCard
+                  key={playlist.name}
+                  playlist={playlist}
+                  onClick={setSelectedPlaylist}
+                />
+              ))}
           </div>
         </>
       ) : (
         <>
           <div className="mood-header">
             <ChevronLeftIcon className="back-icon" onClick={handleBack} />
-            <h2>{selectedMood} Songs</h2>
+            <h2>{selectedPlaylist}</h2>
           </div>
 
           {loading ? (

@@ -71,6 +71,9 @@ export default function MusicPlayer({ song }) {
           onChange={onSeek}
           className="progress-bar"
           aria-label="Seek"
+          style={{
+            background: `linear-gradient(to right, #4FD3C4 ${progress}%, #ccc ${progress}%)`,
+          }}
         />
       </div>
     </div>

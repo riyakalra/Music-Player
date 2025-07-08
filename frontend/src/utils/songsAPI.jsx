@@ -1,7 +1,7 @@
-import { moodPlaylistMap } from "./moodPlaylistMap";
+import { allPlaylists } from "./playlistData";
 
-export const fetchSongsByMood = async (mood) => {
-  const playlistUrl = moodPlaylistMap[mood];
+export const fetchSongsByPlaylist = async (mood) => {
+  const playlistUrl = allPlaylists.find((playlist) => playlist.name === mood)?.url;
   if (!playlistUrl) return [];
   try {
     const res = await fetch(
