@@ -17,7 +17,7 @@ export default function MusicPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
 
-  const { currentSong } = usePlayer();
+  const { currentSong, playNextSong } = usePlayer();
 
   useEffect(() => {
     if (currentSong && audioRef.current) {
@@ -99,7 +99,7 @@ export default function MusicPlayer() {
         ref={audioRef}
         src={currentSong.url}
         onTimeUpdate={onTimeUpdate}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={playNextSong}
         autoPlay
       />
 

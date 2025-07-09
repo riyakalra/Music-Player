@@ -14,7 +14,7 @@ export default function Home() {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { currentSong } = usePlayer();
+  const { currentSong, setSongQueue } = usePlayer();
 
   useEffect(() => {
     const savedPlaylist = localStorage.getItem("selectedPlaylist");
@@ -29,10 +29,11 @@ export default function Home() {
       setLoading(true);
       fetchSongsByPlaylist(selectedPlaylist).then((data) => {
         setSongs(data);
+        setSongQueue(data);
         setLoading(false);
       });
     }
-  }, [selectedPlaylist]);
+  }, [selectedPlaylist, setSongQueue]);
 
   const handleBack = () => {
     setSelectedPlaylist(null);
@@ -73,6 +74,7 @@ export default function Home() {
           <div className="mood-header">
             <ChevronLeftIcon className="back-icon" onClick={handleBack} />
             <h2>{selectedPlaylist}</h2>
+            
           </div>
 
           {loading ? (
