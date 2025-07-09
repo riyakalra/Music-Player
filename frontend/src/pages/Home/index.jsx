@@ -1,6 +1,6 @@
 import "./index.css";
 import { useState, useEffect } from "react";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid";
+import { ChevronLeftIcon, PlayCircleIcon } from "@heroicons/react/24/solid";
 import PlaylistCard from "../../components/PlaylistCard";
 import { fetchSongsByPlaylist } from "../../utils/songsAPI";
 import SongsList from "../../components/SongsList";
@@ -14,7 +14,7 @@ export default function Home() {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { currentSong } = usePlayer();
+  const { currentSong, setCurrentSong, setSongQueue } = usePlayer();
 
   useEffect(() => {
     const savedPlaylist = localStorage.getItem("selectedPlaylist");
@@ -29,10 +29,11 @@ export default function Home() {
       setLoading(true);
       fetchSongsByPlaylist(selectedPlaylist).then((data) => {
         setSongs(data);
+        setSongQueue(data);
         setLoading(false);
       });
     }
-  }, [selectedPlaylist]);
+  }, [selectedPlaylist, setSongQueue]);
 
   const handleBack = () => {
     setSelectedPlaylist(null);
@@ -73,6 +74,15 @@ export default function Home() {
           <div className="mood-header">
             <ChevronLeftIcon className="back-icon" onClick={handleBack} />
             <h2>{selectedPlaylist}</h2>
+            <PlayCircleIcon
+              className="play-icon"
+              onClick={() => {
+                if (songs.length > 0) {
+                  setSongQueue(songs);
+                  setCurrentSong(songs[0]);
+                }
+              }}
+            />
           </div>
 
           {loading ? (

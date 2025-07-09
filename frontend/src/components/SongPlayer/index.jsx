@@ -5,6 +5,8 @@ import {
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
   HeartIcon,
+  BackwardIcon,
+  ForwardIcon,
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
@@ -17,7 +19,7 @@ export default function MusicPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
 
-  const { currentSong } = usePlayer();
+  const { currentSong, playNextSong, playPreviousSong } = usePlayer();
 
   useEffect(() => {
     if (currentSong && audioRef.current) {
@@ -99,7 +101,7 @@ export default function MusicPlayer() {
         ref={audioRef}
         src={currentSong.url}
         onTimeUpdate={onTimeUpdate}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={playNextSong}
         autoPlay
       />
 
@@ -137,6 +139,14 @@ export default function MusicPlayer() {
             background: `linear-gradient(to right, #4FD3C4 ${progress}%, #ccc ${progress}%)`,
           }}
         />
+        <BackwardIcon
+          className="action-icon"
+          onClick={playPreviousSong}
+          />
+          <ForwardIcon
+          className="action-icon"
+          onClick={playNextSong}
+          />
       </div>
 
       {/* Right: Actions */}
