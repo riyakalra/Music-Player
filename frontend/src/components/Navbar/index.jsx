@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./index.css";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { searchSongs } from "../../utils/songsAPI";
@@ -8,18 +8,38 @@ export default function Navbar() {
   const userFirstName = "Riya";
   const initial = userFirstName.charAt(0).toUpperCase();
 
-  const [searchResults, setSearchResults] = useState(null);
+  const inputContainerRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        inputContainerRef.current &&
+        !inputContainerRef.current.contains(e.target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        setSearchResults([]);
+        setSearchQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  
   const handleSearch = async (query) => {
-    if (!query) {
-      setSearchResults(null);
-      setSearchQuery("");
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      setSearchResults([]);
       return;
     }
+
     try {
       const results = await searchSongs(query);
-      setSearchQuery(query);
       setSearchResults(results);
     } catch (error) {
       console.error("Error searching songs:", error);
@@ -28,7 +48,7 @@ export default function Navbar() {
   };
 
   const handleClearSearch = () => {
-    setSearchResults(null);
+    setSearchResults([]);
     setSearchQuery("");
   };
 
@@ -39,22 +59,23 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-section center desktop-search">
-        <div className="navbar-search">
+        <div className="navbar-search" ref={inputContainerRef}>
           <MagnifyingGlassIcon className="search-icon" />
           <input
             type="text"
             placeholder="Search Here"
             className="search-input"
+            value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />
-          {searchResults && searchResults.length > 0 && (
+          {searchResults.length > 0 && (
             <XMarkIcon className="clear-icon" onClick={handleClearSearch} />
           )}
         </div>
 
         {searchQuery.length > 0 &&
           createPortal(
-            <div className="search-results">
+            <div className="search-results" ref={dropdownRef}>
               {searchResults.length > 0
                 ? searchResults.map((song) => (
                     <div key={song.id} className="search-result-item">
@@ -66,7 +87,7 @@ export default function Navbar() {
                       <div className="result-info">
                         <div className="result-title">{song.title}</div>
                         <div className="result-artists">
-                          {song.artists.join(", ")}
+                          {`${song.album} | ${song.artists.join(", ")}`}
                         </div>
                       </div>
                     </div>

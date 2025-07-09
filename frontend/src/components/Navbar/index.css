@@ -120,8 +120,8 @@
 .search-results {
   position: fixed;
   top: 64px; 
-  left: 10%; 
-  width: 80%;
+  left: 13%; 
+  width: 70%;
   max-height: 300px;
   overflow-y: auto;
   background-color: #fff;
