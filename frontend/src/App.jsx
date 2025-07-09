@@ -2,11 +2,13 @@ import "./App.css";
 import LeftMenu from "./components/LeftMenu";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 
 import Home from "./pages/Home";
 
 function App() {
   return (
+    <PlayerProvider>
     <Router>
       <div className="App">
         <Navbar />
@@ -20,6 +22,7 @@ function App() {
         </div>
       </div>
     </Router>
+    </PlayerProvider>
   );
 }
 

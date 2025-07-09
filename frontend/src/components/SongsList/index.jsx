@@ -1,8 +1,11 @@
 import React from "react";
 import "./index.css";
 import { HeartIcon } from "@heroicons/react/24/outline";
+import { usePlayer } from "../../contexts/PlayerContext.jsx";
 
-export default function SongsList({ setCurrentSong, songs }) {
+export default function SongsList({ songs }) {
+
+  const { setCurrentSong } = usePlayer();
 
   return (
     <div className="song-list-container">

@@ -7,12 +7,14 @@ import SongsList from "../../components/SongsList";
 import Loader from "../../components/Loader";
 import SongPlayer from "../../components/SongPlayer";
 import { allPlaylists } from "../../utils/playlistData";
+import { usePlayer } from "../../contexts/PlayerContext.jsx";
 
 export default function Home() {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentSong, setCurrentSong] = useState(null);
+
+  const { currentSong } = usePlayer();
 
   useEffect(() => {
     const savedPlaylist = localStorage.getItem("selectedPlaylist");
@@ -77,12 +79,12 @@ export default function Home() {
             <Loader />
           ) : (
             <>
-              <SongsList setCurrentSong={setCurrentSong} songs={songs} />
+              <SongsList songs={songs} />
             </>
           )}
         </>
       )}
-       {currentSong && <SongPlayer song={currentSong} />}
+       {currentSong && <SongPlayer />}
     </div>
   );
 }

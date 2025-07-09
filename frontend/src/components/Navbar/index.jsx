@@ -3,11 +3,13 @@ import "./index.css";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { searchSongs } from "../../utils/songsAPI";
 import { createPortal } from "react-dom";
+import { usePlayer } from "../../contexts/PlayerContext.jsx";
 
 export default function Navbar() {
   const userFirstName = "Riya";
   const initial = userFirstName.charAt(0).toUpperCase();
 
+  const { setCurrentSong } = usePlayer();
   const inputContainerRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -29,7 +31,7 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
 
@@ -78,7 +80,11 @@ export default function Navbar() {
             <div className="search-results" ref={dropdownRef}>
               {searchResults.length > 0
                 ? searchResults.map((song) => (
-                    <div key={song.id} className="search-result-item">
+                    <div
+                      key={song.id}
+                      className="search-result-item"
+                      onClick={() => setCurrentSong(song)}
+                    >
                       <img
                         src={song.image}
                         alt={song.title}

@@ -7,32 +7,32 @@ import {
   HeartIcon,
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
+import { usePlayer } from "../../contexts/PlayerContext.jsx";
 import "./index.css";
 
-export default function MusicPlayer({ song }) {
+export default function MusicPlayer() {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
 
-  useEffect(() => {
-    if (song && audioRef.current) {
-      audioRef.current.src = song.url;
-      audioRef.current.muted = false;
+  const { currentSong } = usePlayer();
 
+  useEffect(() => {
+    if (currentSong && audioRef.current) {
+      audioRef.current.src = currentSong.url;
+      audioRef.current.muted = false;
       setIsPlaying(true);
       setIsMuted(false);
       setProgress(0);
-      setIsFavourite(song.isFavourite);
+      setIsFavourite(currentSong.isFavourite);
     }
-  }, [song]);
+  }, [currentSong]);
 
-  // Sync playback/mute with state
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
-
       if (isPlaying) {
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
@@ -91,13 +91,13 @@ export default function MusicPlayer({ song }) {
     setProgress(percent);
   };
 
-  if (!song || !song.url) return <div>No preview available</div>;
+  if (!currentSong || !currentSong.url) return <div>No preview available</div>;
 
   return (
     <div className="music-player">
       <audio
         ref={audioRef}
-        src={song.url}
+        src={currentSong.url}
         onTimeUpdate={onTimeUpdate}
         onEnded={() => setIsPlaying(false)}
         autoPlay
@@ -105,10 +105,10 @@ export default function MusicPlayer({ song }) {
 
       {/* Left: Song Info */}
       <div className="player-info">
-        <img src={song.image} alt={song.title} className="song-image" />
+        <img src={currentSong.image} alt={currentSong.title} className="song-image" />
         <div className="song-details">
-          <div className="song-title">{song.title}</div>
-          <div className="song-artists">{song.artists}</div>
+          <div className="song-title">{currentSong.title}</div>
+          <div className="song-artists">{currentSong.artists}</div>
         </div>
       </div>
 

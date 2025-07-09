@@ -36,7 +36,7 @@ export const searchSongs = async (query) => {
       album: song.album.name || 'Information not available',
       artists: song.artists.primary.map(artist => artist.name)  || 'Information not available',
       image: song.image.find(img => img.quality === '50x50')?.url,
-      url: song.url
+      url: song.downloadUrl.find(dl => dl.quality === '320kbps')?.url || song.downloadURL.find(dl => dl.quality === '128kbps')?.url || song.downloadURL.find(dl => dl.quality === '64kbps')?.url
     })).filter(s => s.url); 
   } catch (err) {
     console.error("Error fetching songs:", err);
