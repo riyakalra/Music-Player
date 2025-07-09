@@ -47,3 +47,10 @@
     justify-content: flex-start;
   }
   
+  .play-icon {
+    margin-left: 12px;
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    color: #ffc5c7;
+  }
