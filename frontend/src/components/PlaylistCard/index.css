@@ -32,3 +32,18 @@
     white-space: nowrap;
     overflow: hidden;
   }
+
+  @media (max-width: 768px) {
+    .mood-card {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .mood-card-label {
+      font-size: 1rem;
+    }
+  
+    .playlist-name {
+      max-width: 120px;
+    }
+  }

@@ -13,7 +13,7 @@ function App() {
     <Router>
       <div className="App">
         <Navbar />
-        <div className="main-layout" style={{ display: "flex" }}>
+        <div className="main-layout">
           <LeftMenu />
           <div className="page-content" style={{ flex: 1 }}>
             <Routes>
