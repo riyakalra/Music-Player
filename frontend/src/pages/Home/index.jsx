@@ -5,7 +5,6 @@ import PlaylistCard from "../../components/PlaylistCard";
 import { fetchSongsByPlaylist } from "../../utils/songsAPI";
 import SongsList from "../../components/SongsList";
 import Loader from "../../components/Loader";
-import SongPlayer from "../../components/SongPlayer";
 import { allPlaylists } from "../../utils/playlistData";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
 
@@ -14,18 +13,10 @@ export default function Home() {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { currentSong, setCurrentSong, setSongQueue } = usePlayer();
-
-  useEffect(() => {
-    const savedPlaylist = localStorage.getItem("selectedPlaylist");
-    if (savedPlaylist) {
-      setSelectedPlaylist(savedPlaylist);
-    }
-  }, []);
+  const { setCurrentSong, setSongQueue } = usePlayer();
 
   useEffect(() => {
     if (selectedPlaylist) {
-      localStorage.setItem("selectedPlaylist", selectedPlaylist);
       setLoading(true);
       fetchSongsByPlaylist(selectedPlaylist).then((data) => {
         setSongs(data);
@@ -37,7 +28,6 @@ export default function Home() {
 
   const handleBack = () => {
     setSelectedPlaylist(null);
-    localStorage.removeItem("selectedPlaylist");
   };
 
   return (
@@ -94,7 +84,6 @@ export default function Home() {
           )}
         </>
       )}
-       {currentSong && <SongPlayer />}
     </div>
   );
 }

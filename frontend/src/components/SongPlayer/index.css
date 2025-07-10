@@ -116,3 +116,14 @@
   color: #f00000;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .music-player {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 20px;
+  }
+  .player-info {
+    margin-bottom: 4px;
+  }
+}

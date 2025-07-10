@@ -64,6 +64,6 @@ export const allPlaylists = [
       image: "https://c.saavncdn.com/editorial/Haryanvi-IndiaSuperhitsTop50_20250704060707.jpg",
       url: "https://www.jiosaavn.com/featured/haryanvi-india-superhits-top-50/572s4ABAzlBFMb4ZdYSGfQ__",
       topCharts: true,
-    },
+    }
   ];
   

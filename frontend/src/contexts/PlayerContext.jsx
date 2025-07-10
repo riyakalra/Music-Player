@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const PlayerContext = createContext();
 
@@ -7,6 +7,20 @@ export const usePlayer = () => useContext(PlayerContext);
 export const PlayerProvider = ({ children }) => {
   const [currentSong, setCurrentSong] = useState(null);
   const [songQueue, setSongQueue] = useState([]);
+
+  useEffect(() => {
+    const savedSong = localStorage.getItem("currentSong");
+    const savedQueue = localStorage.getItem("songQueue");
+
+    if (savedSong) setCurrentSong(JSON.parse(savedSong));
+    if (savedQueue) setSongQueue(JSON.parse(savedQueue));
+  }, []);
+
+  useEffect(() => {
+    if (currentSong) {
+      localStorage.setItem("currentSong", JSON.stringify(currentSong));
+    }
+  }, [currentSong]);
 
   const playNextSong = () => {
     if (!currentSong || songQueue.length === 0) return;
