@@ -3,6 +3,7 @@ import LeftMenu from "./components/LeftMenu";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PlayerProvider } from "./contexts/PlayerContext.jsx";
+import SongPlayer from "./components/SongPlayer";
 
 import Home from "./pages/Home";
 
@@ -20,6 +21,7 @@ function App() {
             </Routes>
           </div>
         </div>
+        <SongPlayer />
       </div>
     </Router>
     </PlayerProvider>
