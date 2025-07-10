@@ -1,29 +1,26 @@
 import "./App.css";
 import LeftMenu from "./components/LeftMenu";
 import Navbar from "./components/Navbar";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 import SongPlayer from "./components/SongPlayer";
-
-import Home from "./pages/Home";
+import { BrowserRouter as Router } from "react-router-dom";
+import { PlayerProvider } from "./contexts/PlayerContext.jsx";
+import AppRoutes from "./AppRoutes";
 
 function App() {
   return (
     <PlayerProvider>
-    <Router>
-      <div className="App">
-        <Navbar />
-        <div className="main-layout">
-          <LeftMenu />
-          <div className="page-content" style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-            </Routes>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <div className="main-layout" style={{ display: "flex" }}>
+            <LeftMenu />
+            <div className="page-content" style={{ flex: 1 }}>
+              <AppRoutes /> 
+            </div>
           </div>
+          <SongPlayer />
         </div>
-        <SongPlayer />
-      </div>
-    </Router>
+      </Router>
     </PlayerProvider>
   );
 }
