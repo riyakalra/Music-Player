@@ -1,0 +1,22 @@
+.auth-page {
+    text-align: center;
+}
+
+.auth-title {
+    font-size: 4rem;
+    color: #4C585B;
+}
+
+.auth-description {
+    width: 70%;
+    color: #4b4c4c;
+    text-align: center;  
+    font-size: 1.5rem;    
+    line-height: 1.8;
+    margin: 3rem auto;
+}
+
+.auth-app-name {
+    font-weight: bold;
+    color: white;
+}
