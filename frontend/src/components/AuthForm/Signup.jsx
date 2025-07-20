@@ -2,11 +2,13 @@ import { useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import "./index.css";
 
-export default function Signup() {
+export default function Signup({ onSignupComplete }) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleNext = (e) => {
@@ -23,7 +25,18 @@ export default function Signup() {
       setError("Please select a gender");
       return;
     }
-    setError("");
+    if (step === 4 && !password) {
+      return setError("Please enter a password.");
+    }
+    if (step === 5) {
+      if (!confirmPassword) return setError("Please confirm your password.");
+      if (password !== confirmPassword) {
+        return setError("Passwords do not match.");
+      }
+      onSignupComplete?.({ name, age, gender, password });
+      return;
+    }
+
     setStep(step + 1);
   };
 
@@ -40,28 +53,32 @@ export default function Signup() {
       </div>
 
       {step === 1 && (
-          <input
-            type="name"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="auth-input"
-          />
+        <input
+          type="name"
+          placeholder="Enter your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="auth-input"
+        />
       )}
 
       {step === 2 && (
-         <input
-         type="age"
-         placeholder="Enter your age"
-         value={age}
-         onChange={(e) => setAge(e.target.value)}
-         className="auth-input"
-       />
+        <input
+          type="age"
+          placeholder="Enter your age"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+          className="auth-input"
+        />
       )}
 
       {step === 3 && (
         <>
-          <select className="auth-input" value={gender} onChange={(e) => setGender(e.target.value)}>
+          <select
+            className="auth-input"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
             <option value="">Select gender</option>
             <option value="female">Female</option>
             <option value="male">Male</option>
@@ -71,19 +88,31 @@ export default function Signup() {
         </>
       )}
 
+      {step === 4 && (
+        <input
+          type="password"
+          placeholder="Create a password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="auth-input"
+        />
+      )}
+
+      {step === 5 && (
+        <input
+          type="password"
+          placeholder="Confirm password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="auth-input"
+        />
+      )}
+
       {error && <div className="auth-error">{error}</div>}
 
-      <div className="form-buttons">
-        {step < 3 ? (
-           <button type="submit" className="auth-button" onClick={handleNext}>
-           Next
-         </button>
-        ) : (
-          <button type="button" className="auth-button" onClick={() => alert("Signup complete!")}>
-            Submit
-          </button>
-        )}
-      </div>
+      <button type="submit" className="auth-button" onClick={handleNext}>
+        {step === 5 ? "Sign Up" : "Next"}
+      </button>
     </form>
   );
 }

@@ -4,7 +4,10 @@ import {
   getAuth,
   fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import Signup from "./Signup";
 import "./index.css";
 
@@ -14,7 +17,36 @@ export default function AuthForm() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [userExists, setUserExists] = useState(null);
+
   const auth = getAuth();
+  const db = getFirestore();
+
+  const handleSignupComplete = async ({ name, age, gender, password }) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: name,
+      });
+
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        age,
+        gender,
+        email: user.email,
+        createdAt: new Date(),
+      });
+
+      console.log("Signup complete", { name, age, gender });
+    } catch (err) {
+      setError(`Signup error: ${err.message}`);
+    }
+  };
 
   const handleNext = async (e) => {
     e.preventDefault();
@@ -35,7 +67,7 @@ export default function AuthForm() {
           setStep(3);
         }
       } catch (err) {
-        setError("Invalid email format or network error.");
+        setError(`Error: ${err.message}`);
       }
     } else if (step === 2) {
       if (!password) {
@@ -46,7 +78,7 @@ export default function AuthForm() {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login successful!");
       } catch (err) {
-        setError("Invalid password or user not found.");
+        setError(`Error: ${err.message}`);
       }
     }
   };
@@ -65,7 +97,10 @@ export default function AuthForm() {
 
   return (
     <div className="auth-form-wrapper">
-      <form className={`${step == 3 && "signup-details"} auth-form`} onSubmit={handleNext}>
+      <form
+        className={`${step == 3 && "signup-details"} auth-form`}
+        onSubmit={handleNext}
+      >
         {step === 1 && (
           <input
             type="email"
@@ -90,7 +125,9 @@ export default function AuthForm() {
           </div>
         )}
 
-        {step === 3 && !userExists && <Signup email={email} />}
+        {step === 3 && !userExists && (
+          <Signup email={email} onSignupComplete={handleSignupComplete} />
+        )}
 
         {error && (
           <div className="auth-error">
