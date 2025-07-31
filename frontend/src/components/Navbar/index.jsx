@@ -4,8 +4,11 @@ import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { searchSongs } from "../../utils/songsAPI";
 import { createPortal } from "react-dom";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
+import { getAuth, signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const userFirstName = "Riya";
   const initial = userFirstName.charAt(0).toUpperCase();
 
@@ -15,6 +18,7 @@ export default function Navbar() {
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -31,6 +35,17 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = async() => {
+    try {
+      const auth = getAuth();
+      await signOut(auth);
+      navigate("/auth")
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+   
+  }
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
@@ -55,6 +70,7 @@ export default function Navbar() {
   };
 
   return (
+    <>
     <nav className="navbar">
       <div className="navbar-section left">
         <div className="navbar-logo">MelodyHub</div>
@@ -109,8 +125,20 @@ export default function Navbar() {
           <MagnifyingGlassIcon className="search-icon" />
           <input type="text" placeholder="Search" className="search-input" />
         </div>
-        <div className="navbar-avatar">{initial}</div>
+        <div
+          className="navbar-avatar"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          {initial}
+        </div>
       </div>
     </nav>
+
+    {isDropdownOpen && (
+      <div className="user-dropdown" ref={dropdownRef}>
+        <div className="dropdown-item" onClick={handleLogout}>Logout</div>
+      </div>
+    )}
+    </>
   );
 }
