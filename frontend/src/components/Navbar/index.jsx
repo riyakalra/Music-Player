@@ -15,6 +15,7 @@ export default function Navbar() {
   const { setCurrentSong } = usePlayer();
   const inputContainerRef = useRef(null);
   const dropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,10 +32,20 @@ export default function Navbar() {
         setSearchResults([]);
         setSearchQuery("");
       }
+  
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(e.target) &&
+        !e.target.closest(".navbar-avatar")
+      ) {
+        setIsDropdownOpen(false);
+      }
     };
+  
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  
 
   const handleLogout = async() => {
     try {
@@ -135,7 +146,7 @@ export default function Navbar() {
     </nav>
 
     {isDropdownOpen && (
-      <div className="user-dropdown" ref={dropdownRef}>
+      <div className="user-dropdown" ref={userDropdownRef}>
         <div className="dropdown-item" onClick={handleLogout}>Logout</div>
       </div>
     )}
