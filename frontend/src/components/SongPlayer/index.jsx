@@ -92,8 +92,8 @@ export default function MusicPlayer() {
     audioRef.current.currentTime = (percent / 100) * duration;
     setProgress(percent);
   };
-
-  if (!currentSong || !currentSong.url) return <div>No preview available</div>;
+  if (!currentSong) return null;
+  if (!currentSong?.url) return <div>No preview available</div>;
 
   return (
     <div className="music-player">

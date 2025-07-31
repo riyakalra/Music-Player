@@ -119,8 +119,8 @@
 
 .search-results {
   position: fixed;
-  top: 64px; 
-  left: 13%; 
+  top: 64px;
+  left: 13%;
   width: 70%;
   max-height: 300px;
   overflow-y: auto;
@@ -157,4 +157,35 @@
 
 .result-artists {
   font-size: 12px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 64px;
+  right: 2%;
+  width: 100px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+
+.dropdown-item {
+  padding: 12px 8px;
+  cursor: pointer;
+  color: #666;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-item:not(:last-child) {
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item:last-child {
+  color: red;
 }
