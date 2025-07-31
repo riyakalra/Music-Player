@@ -6,7 +6,15 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  doc,
+  setDoc,
+  getDocs
+} from "firebase/firestore";
 import Signup from "./Signup";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
@@ -52,18 +60,20 @@ export default function AuthForm() {
   const handleNext = async (e) => {
     e.preventDefault();
     setError("");
-    console.log("Checking for email:", email);
     if (step === 1) {
       if (!email) {
         return setError("Please enter a valid email address");
       }
       try {
-        const methods = await fetchSignInMethodsForEmail(auth, email);
-        if (methods.length > 0) {
-          setUserExists(true);
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email.toLowerCase()));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          setUserExists(true); // User exists in Firestore
           setStep(2);
         } else {
-          setUserExists(false);
+          setUserExists(false); // New user
           setStep(3);
         }
       } catch (err) {
@@ -92,8 +102,8 @@ export default function AuthForm() {
       setStep(1);
       setUserExists(null);
     } else {
-        setStep(step - 1);
-        setError("");
+      setStep(step - 1);
+      setError("");
     }
     setError("");
   };
@@ -130,8 +140,8 @@ export default function AuthForm() {
 
         {step === 3 && !userExists && (
           <Signup
-          onSignupComplete={handleSignupComplete} 
-          backtoLogin={handleBack}
+            onSignupComplete={handleSignupComplete}
+            backtoLogin={handleBack}
           />
         )}
 
