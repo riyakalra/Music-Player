@@ -4,6 +4,7 @@ import Explore from "./pages/Explore";
 import AuthPage from "./pages/auth";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import PrivateRoute from "./PrivateRoute";
 
 export default function AppRoutes() {
   return (
@@ -13,10 +14,16 @@ export default function AppRoutes() {
         <Route path="/auth" element={<AuthPage />} />
       </Route>
 
-      {/* Main routes */}
-      <Route element={<MainLayout />}>
-      <Route path="/" element={<Home />} />
-      <Route path="/explore" element={<Explore />} />
+      {/* Protected main routes */}
+      <Route
+        element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<Explore />} />
       </Route>
     </Routes>
   );

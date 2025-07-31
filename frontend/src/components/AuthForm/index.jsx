@@ -2,13 +2,13 @@ import { useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {
   getAuth,
-  fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import Signup from "./Signup";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 export default function AuthForm() {
@@ -20,6 +20,7 @@ export default function AuthForm() {
 
   const auth = getAuth();
   const db = getFirestore();
+  const navigate = useNavigate();
 
   const handleSignupComplete = async ({ name, age, gender, password }) => {
     try {
@@ -42,7 +43,7 @@ export default function AuthForm() {
         createdAt: new Date(),
       });
 
-      console.log("Signup complete", { name, age, gender });
+      navigate("/");
     } catch (err) {
       setError(`Signup error: ${err.message}`);
     }
@@ -51,12 +52,11 @@ export default function AuthForm() {
   const handleNext = async (e) => {
     e.preventDefault();
     setError("");
-
+    console.log("Checking for email:", email);
     if (step === 1) {
       if (!email) {
         return setError("Please enter a valid email address");
       }
-
       try {
         const methods = await fetchSignInMethodsForEmail(auth, email);
         if (methods.length > 0) {
@@ -76,7 +76,7 @@ export default function AuthForm() {
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Login successful!");
+        navigate("/");
       } catch (err) {
         setError(`Error: ${err.message}`);
       }
@@ -91,6 +91,9 @@ export default function AuthForm() {
     } else if (step === 3) {
       setStep(1);
       setUserExists(null);
+    } else {
+        setStep(step - 1);
+        setError("");
     }
     setError("");
   };
@@ -126,7 +129,10 @@ export default function AuthForm() {
         )}
 
         {step === 3 && !userExists && (
-          <Signup email={email} onSignupComplete={handleSignupComplete} />
+          <Signup
+          onSignupComplete={handleSignupComplete} 
+          backtoLogin={handleBack}
+          />
         )}
 
         {error && (

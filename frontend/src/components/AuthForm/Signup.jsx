@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import "./index.css";
 
-export default function Signup({ onSignupComplete }) {
+export default function Signup({ onSignupComplete, backtoLogin }) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
@@ -41,12 +41,16 @@ export default function Signup({ onSignupComplete }) {
   };
 
   const handleBack = () => {
+    if(step === 1) {
+      backtoLogin();
+      return;
+    }
     setError("");
     setStep(step - 1);
   };
 
   return (
-    <form className="signup-form">
+    <div className="signup-form">
       <div className="auth-input-wrapper">
         <ArrowLeftCircleIcon className="back-button" onClick={handleBack} />
         <h2>Enter your details to complete setup</h2>
@@ -113,6 +117,6 @@ export default function Signup({ onSignupComplete }) {
       <button type="submit" className="auth-button" onClick={handleNext}>
         {step === 5 ? "Sign Up" : "Next"}
       </button>
-    </form>
+    </div>
   );
 }
