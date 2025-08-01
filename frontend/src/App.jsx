@@ -6,15 +6,18 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import AppRoutes from "./AppRoutes";
+import { UserDataProvider } from "./contexts/UserDataContext.jsx";
 
 function App() {
   return (
     <AuthProvider>
-    <PlayerProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </PlayerProvider>
+      <UserDataProvider>
+        <PlayerProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </PlayerProvider>
+      </UserDataProvider>
     </AuthProvider>
   );
 }

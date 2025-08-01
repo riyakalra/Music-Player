@@ -72,3 +72,16 @@
   .song-table tbody tr:hover {
     background-color: #F6DBDC;
   }
+
+  .mark-fav-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .remove-fav-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: red;
+  }

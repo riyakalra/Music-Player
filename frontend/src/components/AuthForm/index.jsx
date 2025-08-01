@@ -70,10 +70,10 @@ export default function AuthForm() {
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          setUserExists(true); // User exists in Firestore
+          setUserExists(true); 
           setStep(2);
         } else {
-          setUserExists(false); // New user
+          setUserExists(false);
           setStep(3);
         }
       } catch (err) {
