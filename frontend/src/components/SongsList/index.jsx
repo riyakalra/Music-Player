@@ -1,56 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./index.css";
 import { HeartIcon as OutlineHeart } from "@heroicons/react/24/outline";
 import { HeartIcon as SolidHeart } from "@heroicons/react/24/solid";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
-import { doc, setDoc, getDoc, getFirestore } from "firebase/firestore";
-import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useUserData } from "../../contexts/UserDataContext.jsx";
 
 export default function SongsList({ songs }) {
   const { setCurrentSong } = usePlayer();
-  const { user } = useAuth();
-  const db = getFirestore();
-
-  const [favoriteIds, setFavoriteIds] = useState(new Set());
-
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      if (!user) return;
-      const userDocRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(userDocRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const favIds = new Set(data.favorites || []);
-        setFavoriteIds(favIds);
-      }
-    };
-
-    fetchFavorites();
-  }, [user, db]);
-
-  const toggleFavorite = async (song) => {
-    if (!user) return;
-    const userDocRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDocRef);
-    let updatedFavorites = [];
-
-    if (docSnap.exists()) {
-      const currentFavorites = docSnap.data().favorites || [];
-
-      if (favoriteIds.has(song.id)) {
-        updatedFavorites = currentFavorites.filter((id) => id !== song.id);
-      } else {
-        updatedFavorites = [...currentFavorites, song.id];
-      }
-
-      await setDoc(
-        userDocRef,
-        { favorites: updatedFavorites },
-        { merge: true }
-      );
-      setFavoriteIds(new Set(updatedFavorites));
-    }
-  };
+  const { isFavorite, toggleFavorite } = useUserData();
 
   return (
     <div className="song-list-container">
@@ -80,7 +37,7 @@ export default function SongsList({ songs }) {
               <td>{song.album}</td>
               <td>{song.artists}</td>
               <td onClick={() => toggleFavorite(song)}>
-                {favoriteIds.has(song.id) ? (
+                {isFavorite(song.id) ? (
                   <SolidHeart className="remove-fav-icon" />
                 ) : (
                   <OutlineHeart className="mark-fav-icon" />

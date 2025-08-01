@@ -10,8 +10,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
-import { useAuth } from "../../contexts/AuthContext.jsx";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { useUserData } from "../../contexts/UserDataContext.jsx";
 import "./index.css";
 
 export default function MusicPlayer() {
@@ -19,11 +18,9 @@ export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [isFavourite, setIsFavourite] = useState(false);
 
   const { currentSong, playNextSong, playPreviousSong } = usePlayer();
-  const { user } = useAuth();
-  const db = getFirestore();
+  const { isFavorite, toggleFavorite } = useUserData();
 
   useEffect(() => {
     if (currentSong && audioRef.current) {
@@ -32,80 +29,32 @@ export default function MusicPlayer() {
       setIsPlaying(true);
       setIsMuted(false);
       setProgress(0);
-      checkIfFavourite();
     }
   }, [currentSong]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
-      if (isPlaying) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((err) => {
-            console.warn("Playback failed:", err);
-            setIsPlaying(false);
-          });
-        }
-      } else {
-        audioRef.current.pause();
+    if (!audioRef.current) return;
+
+    audioRef.current.muted = isMuted;
+    if (isPlaying) {
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Playback failed:", err);
+          setIsPlaying(false);
+        });
       }
+    } else {
+      audioRef.current.pause();
     }
   }, [isPlaying, isMuted]);
 
   const togglePlayPause = () => {
-    setIsPlaying((prev) => {
-      const newState = !prev;
-      if (audioRef.current) {
-        if (newState) {
-          audioRef.current.play().catch((err) => {
-            console.error("Play failed:", err);
-          });
-        } else {
-          audioRef.current.pause();
-        }
-      }
-      return newState;
-    });
+    setIsPlaying((prev) => !prev);
   };
 
   const toggleMute = () => {
-    setIsMuted((prev) => {
-      const newMuted = !prev;
-      if (audioRef.current) {
-        audioRef.current.muted = newMuted;
-      }
-      return newMuted;
-    });
-  };
-
-  const checkIfFavourite = async () => {
-    if (!user || !currentSong) return;
-    const userDocRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDocRef);
-    if (docSnap.exists()) {
-      const favs = docSnap.data().favorites || [];
-      setIsFavourite(favs.includes(currentSong.id));
-    }
-  };
-
-  const toggleFavourite = async () => {
-    if (!user || !currentSong) return;
-    const userDocRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDocRef);
-    if (!docSnap.exists()) return;
-
-    const currentFavs = docSnap.data().favorites || [];
-    let updatedFavs;
-
-    if (currentFavs.includes(currentSong.id)) {
-      updatedFavs = currentFavs.filter((id) => id !== currentSong.id);
-    } else {
-      updatedFavs = [...currentFavs, currentSong.id];
-    }
-
-    await setDoc(userDocRef, { favorites: updatedFavs }, { merge: true });
-    setIsFavourite(updatedFavs.includes(currentSong.id));
+    setIsMuted((prev) => !prev);
   };
 
   const onTimeUpdate = () => {
@@ -120,6 +69,7 @@ export default function MusicPlayer() {
     audioRef.current.currentTime = (percent / 100) * duration;
     setProgress(percent);
   };
+
   if (!currentSong) return null;
   if (!currentSong?.url) return <div>No preview available</div>;
 
@@ -177,10 +127,16 @@ export default function MusicPlayer() {
 
       {/* Right: Actions */}
       <div className="player-actions">
-        {isFavourite ? (
-          <HeartIcon className="favourite-icon" onClick={toggleFavourite} />
+        {isFavorite(currentSong.id) ? (
+          <HeartIcon
+            className="favourite-icon"
+            onClick={() => toggleFavorite(currentSong)}
+          />
         ) : (
-          <HeartIconOutline className="action-icon" onClick={toggleFavourite} />
+          <HeartIconOutline
+            className="action-icon"
+            onClick={() => toggleFavorite(currentSong)}
+          />
         )}
         <button
           onClick={toggleMute}
