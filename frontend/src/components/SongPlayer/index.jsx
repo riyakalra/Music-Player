@@ -10,6 +10,8 @@ import {
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import "./index.css";
 
 export default function MusicPlayer() {
@@ -20,6 +22,8 @@ export default function MusicPlayer() {
   const [isFavourite, setIsFavourite] = useState(false);
 
   const { currentSong, playNextSong, playPreviousSong } = usePlayer();
+  const { user } = useAuth();
+  const db = getFirestore();
 
   useEffect(() => {
     if (currentSong && audioRef.current) {
@@ -28,7 +32,7 @@ export default function MusicPlayer() {
       setIsPlaying(true);
       setIsMuted(false);
       setProgress(0);
-      setIsFavourite(currentSong.isFavourite);
+      checkIfFavourite();
     }
   }, [currentSong]);
 
@@ -75,9 +79,33 @@ export default function MusicPlayer() {
     });
   };
 
-  const toggleFavourite = () => {
-    setIsFavourite((prev) => !prev);
-    // TODO: Update global state or persist favourite
+  const checkIfFavourite = async () => {
+    if (!user || !currentSong) return;
+    const userDocRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userDocRef);
+    if (docSnap.exists()) {
+      const favs = docSnap.data().favorites || [];
+      setIsFavourite(favs.includes(currentSong.id));
+    }
+  };
+
+  const toggleFavourite = async () => {
+    if (!user || !currentSong) return;
+    const userDocRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userDocRef);
+    if (!docSnap.exists()) return;
+
+    const currentFavs = docSnap.data().favorites || [];
+    let updatedFavs;
+
+    if (currentFavs.includes(currentSong.id)) {
+      updatedFavs = currentFavs.filter((id) => id !== currentSong.id);
+    } else {
+      updatedFavs = [...currentFavs, currentSong.id];
+    }
+
+    await setDoc(userDocRef, { favorites: updatedFavs }, { merge: true });
+    setIsFavourite(updatedFavs.includes(currentSong.id));
   };
 
   const onTimeUpdate = () => {
@@ -107,7 +135,11 @@ export default function MusicPlayer() {
 
       {/* Left: Song Info */}
       <div className="player-info">
-        <img src={currentSong.image} alt={currentSong.title} className="song-image" />
+        <img
+          src={currentSong.image}
+          alt={currentSong.title}
+          className="song-image"
+        />
         <div className="song-details">
           <div className="song-title">{currentSong.title}</div>
           <div className="song-artists">{currentSong.artists}</div>
@@ -139,14 +171,8 @@ export default function MusicPlayer() {
             background: `linear-gradient(to right, #4FD3C4 ${progress}%, #ccc ${progress}%)`,
           }}
         />
-        <BackwardIcon
-          className="action-icon"
-          onClick={playPreviousSong}
-          />
-          <ForwardIcon
-          className="action-icon"
-          onClick={playNextSong}
-          />
+        <BackwardIcon className="action-icon" onClick={playPreviousSong} />
+        <ForwardIcon className="action-icon" onClick={playNextSong} />
       </div>
 
       {/* Right: Actions */}
