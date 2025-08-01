@@ -7,7 +7,7 @@ import { useUserData } from "../../contexts/UserDataContext.jsx";
 
 export default function SongsList({ songs }) {
   const { setCurrentSong } = usePlayer();
-  const { isFavorite, toggleFavorite } = useUserData();
+  const { isFavourite, toggleFavourite } = useUserData();
 
   return (
     <div className="song-list-container">
@@ -36,8 +36,8 @@ export default function SongsList({ songs }) {
               </td>
               <td>{song.album}</td>
               <td>{song.artists}</td>
-              <td onClick={() => toggleFavorite(song)}>
-                {isFavorite(song.id) ? (
+              <td onClick={() => toggleFavourite(song)}>
+                {isFavourite(song.id) ? (
                   <SolidHeart className="remove-fav-icon" />
                 ) : (
                   <OutlineHeart className="mark-fav-icon" />

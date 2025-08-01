@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
+import Favourites from "./pages/Favourites";
 import AuthPage from "./pages/auth";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/favourites" element={<Favourites />} />
       </Route>
     </Routes>
   );

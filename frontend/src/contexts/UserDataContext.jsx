@@ -17,44 +17,44 @@ export const UserDataProvider = ({ children }) => {
   const { user } = useAuth();
   const db = getFirestore();
 
-  const [favorites, setFavorites] = useState([]);
+  const [favourites, setFavourites] = useState([]);
 
   useEffect(() => {
     if (!user) {
-      setFavorites([]);
+      setFavourites([]);
       return;
     }
 
     const userDocRef = doc(db, "users", user.uid);
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
-        setFavorites(docSnap.data().favorites || []);
+        setFavourites(docSnap.data().favourites || []);
       } else {
-        setDoc(userDocRef, { favorites: [] });
+        setDoc(userDocRef, { favourites: [] });
       }
     });
 
     return unsubscribe;
   }, [user, db]);
 
-  const toggleFavorite = async (song) => {
+  const toggleFavourite = async (song) => {
     if (!user || !song?.id) return;
     const userDocRef = doc(db, "users", user.uid);
-    const isFav = favorites.some((fav) => fav.id === song.id);
+    const isFav = favourites.some((fav) => fav.id === song.id);
 
     try {
       await updateDoc(userDocRef, {
-        favorites: isFav ? arrayRemove(song) : arrayUnion(song),
+        favourites: isFav ? arrayRemove(song) : arrayUnion(song),
       });
     } catch (error) {
-      console.error("Failed to toggle favorite:", error);
+      console.error("Failed to toggle favourite:", error);
     }
   };
 
-  const isFavorite = (songId) => favorites.some((song) => song.id === songId);
+  const isFavourite = (songId) => favourites.some((song) => song.id === songId);
 
   return (
-    <UserDataContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>
+    <UserDataContext.Provider value={{ favourites, toggleFavourite, isFavourite }}>
       {children}
     </UserDataContext.Provider>
   );

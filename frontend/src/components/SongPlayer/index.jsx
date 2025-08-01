@@ -20,7 +20,7 @@ export default function MusicPlayer() {
   const [isMuted, setIsMuted] = useState(false);
 
   const { currentSong, playNextSong, playPreviousSong } = usePlayer();
-  const { isFavorite, toggleFavorite } = useUserData();
+  const { isFavourite, toggleFavourite } = useUserData();
 
   useEffect(() => {
     if (currentSong && audioRef.current) {
@@ -127,15 +127,15 @@ export default function MusicPlayer() {
 
       {/* Right: Actions */}
       <div className="player-actions">
-        {isFavorite(currentSong.id) ? (
+        {isFavourite(currentSong.id) ? (
           <HeartIcon
             className="favourite-icon"
-            onClick={() => toggleFavorite(currentSong)}
+            onClick={() => toggleFavourite(currentSong)}
           />
         ) : (
           <HeartIconOutline
             className="action-icon"
-            onClick={() => toggleFavorite(currentSong)}
+            onClick={() => toggleFavourite(currentSong)}
           />
         )}
         <button
