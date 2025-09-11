@@ -30,19 +30,32 @@ export default function AuthForm() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      localStorage.removeItem("currentSong");
+      localStorage.removeItem("songQueue");
       navigate("/");
     } catch (err) {
       if (err.code === "auth/user-not-found") {
         setError("No account found with this email. Please sign up.");
-      } else if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+      } else if (
+        err.code === "auth/wrong-password" ||
+        err.code === "auth/invalid-credential"
+      ) {
         setError("Incorrect credentials.");
       } else {
-        setError("Failed to login. Please check your login credentials or signup if you don't have an account.");
+        setError(
+          "Failed to login. Please check your login credentials or signup if you don't have an account."
+        );
       }
     }
   };
 
-  const handleSignupComplete = async ({ email, name, age, gender, password }) => {
+  const handleSignupComplete = async ({
+    email,
+    name,
+    age,
+    gender,
+    password,
+  }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -60,7 +73,8 @@ export default function AuthForm() {
         email: user.email,
         createdAt: new Date(),
       });
-
+      localStorage.removeItem("currentSong");
+      localStorage.removeItem("songQueue");
       navigate("/");
     } catch (err) {
       setError(`Signup error: ${err.message}`);
