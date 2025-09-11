@@ -49,6 +49,20 @@
     font-size: 1rem;
   }
 
+  .auth-switch {
+    color: #4C585B;
+  }
+
+  .auth-signup-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0;
+    font-size: 1rem;
+  }
+
   .auth-input-wrapper {
     width: 100%;
     display: flex;
@@ -65,4 +79,8 @@
 
   .signup-details {
     max-width: 600px;
+  }
+
+  .signup-description {
+    text-align: left;
   }

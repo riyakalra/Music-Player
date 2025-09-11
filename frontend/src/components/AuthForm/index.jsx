@@ -1,20 +1,11 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  doc,
-  setDoc,
-  getDocs
-} from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import Signup from "./Signup";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
@@ -22,15 +13,36 @@ import "./index.css";
 export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [step, setStep] = useState(1);
   const [error, setError] = useState("");
-  const [userExists, setUserExists] = useState(null);
+  const [showSignup, setShowSignup] = useState(false);
 
   const auth = getAuth();
   const db = getFirestore();
   const navigate = useNavigate();
 
-  const handleSignupComplete = async ({ name, age, gender, password }) => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      return setError("Please enter both email and password.");
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (err) {
+      if (err.code === "auth/user-not-found") {
+        setError("No account found with this email. Please sign up.");
+      } else if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        setError("Incorrect credentials.");
+      } else {
+        setError("Failed to login. Please check your login credentials or signup if you don't have an account.");
+      }
+    }
+  };
+
+  const handleSignupComplete = async ({ email, name, age, gender, password }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -39,9 +51,7 @@ export default function AuthForm() {
       );
       const user = userCredential.user;
 
-      await updateProfile(user, {
-        displayName: name,
-      });
+      await updateProfile(user, { displayName: name });
 
       await setDoc(doc(db, "users", user.uid), {
         name,
@@ -57,106 +67,49 @@ export default function AuthForm() {
     }
   };
 
-  const handleNext = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (step === 1) {
-      if (!email) {
-        return setError("Please enter a valid email address");
-      }
-      try {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", email.toLowerCase()));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          setUserExists(true); 
-          setStep(2);
-        } else {
-          setUserExists(false);
-          setStep(3);
-        }
-      } catch (err) {
-        setError(`Error: ${err.message}`);
-      }
-    } else if (step === 2) {
-      if (!password) {
-        return setError("Please enter a password");
-      }
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        navigate("/");
-      } catch (err) {
-        setError(`Error: ${err.message}`);
-      }
-    }
-  };
-
-  const handleBack = () => {
-    if (step === 2) {
-      setStep(1);
-      setPassword("");
-      setUserExists(null);
-    } else if (step === 3) {
-      setStep(1);
-      setUserExists(null);
-    } else {
-      setStep(step - 1);
-      setError("");
-    }
-    setError("");
-  };
-
   return (
     <div className="auth-form-wrapper">
-      <form
-        className={`${step == 3 && "signup-details"} auth-form`}
-        onSubmit={handleNext}
-      >
-        {step === 1 && (
+      {showSignup ? (
+        <Signup
+          onSignupComplete={handleSignupComplete}
+          backtoLogin={() => setShowSignup(false)}
+        />
+      ) : (
+        <form className="auth-form" onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="Enter your email to get started"
+            placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="auth-input"
           />
-        )}
 
-        {step === 2 && userExists && (
-          <div className="auth-input-wrapper">
-            <ArrowLeftCircleIcon className="back-button" onClick={handleBack} />
-
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="auth-input"
-            />
-          </div>
-        )}
-
-        {step === 3 && !userExists && (
-          <Signup
-            onSignupComplete={handleSignupComplete}
-            backtoLogin={handleBack}
+          <input
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="auth-input"
           />
-        )}
 
-        {error && (
-          <div className="auth-error">
-            <span>{error}</span>
-          </div>
-        )}
+          {error && <div className="auth-error">{error}</div>}
 
-        {step !== 3 && (
           <button type="submit" className="auth-button">
-            Next
+            Login
           </button>
-        )}
-      </form>
+
+          <p className="auth-switch">
+            Don’t have an account?{" "}
+            <button
+              type="button"
+              className="auth-signup-btn"
+              onClick={() => setShowSignup(true)}
+            >
+              Sign up
+            </button>
+          </p>
+        </form>
+      )}
     </div>
   );
 }
