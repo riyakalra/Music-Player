@@ -37,6 +37,16 @@
 
 .song-table th:nth-child(5),
 .song-table td:nth-child(5) {
+  width: 100px; 
+}
+
+.song-table td:nth-child(5) {
+  text-align: center;
+}
+
+
+.song-table th:nth-child(6),
+.song-table td:nth-child(6) {
   width: 40px; 
 }
 

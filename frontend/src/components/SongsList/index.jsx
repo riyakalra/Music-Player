@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.css";
 import { HeartIcon as OutlineHeart } from "@heroicons/react/24/outline";
-import { HeartIcon as SolidHeart } from "@heroicons/react/24/solid";
+import { HeartIcon as SolidHeart, PlusIcon } from "@heroicons/react/24/solid";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
 import { useUserData } from "../../contexts/UserDataContext.jsx";
 
@@ -18,6 +18,7 @@ export default function SongsList({ songs }) {
             <th>Title</th>
             <th>Album</th>
             <th>Artists</th>
+            <th>Add to Playlist</th>
             <th>
               <OutlineHeart className="mark-fav-icon" />
             </th>
@@ -36,6 +37,7 @@ export default function SongsList({ songs }) {
               </td>
               <td>{song.album}</td>
               <td>{song.artists}</td>
+              <td><PlusIcon className="mark-fav-icon"/></td>
               <td onClick={() => toggleFavourite(song)}>
                 {isFavourite(song.id) ? (
                   <SolidHeart className="remove-fav-icon" />
