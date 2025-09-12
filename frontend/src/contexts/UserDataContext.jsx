@@ -31,7 +31,7 @@ export const UserDataProvider = ({ children }) => {
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
         setFavourites(docSnap.data().favourites || []);
-        setPlaylists(docSnap.playlists || []);
+        setPlaylists(docSnap.data().playlists || []);
       } else {
         setDoc(userDocRef, { favourites: [], playlists: [] });
       }

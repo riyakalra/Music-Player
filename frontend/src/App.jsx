@@ -1,7 +1,5 @@
 import "./App.css";
-import LeftMenu from "./components/LeftMenu";
-import Navbar from "./components/Navbar";
-import SongPlayer from "./components/SongPlayer";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router } from "react-router-dom";
 import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
@@ -18,6 +16,7 @@ function App() {
           </Router>
         </PlayerProvider>
       </UserDataProvider>
+      <Toaster position="top-center" reverseOrder={false} />
     </AuthProvider>
   );
 }

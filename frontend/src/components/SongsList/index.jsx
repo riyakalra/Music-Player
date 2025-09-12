@@ -4,10 +4,19 @@ import { HeartIcon as OutlineHeart } from "@heroicons/react/24/outline";
 import { HeartIcon as SolidHeart, PlusIcon } from "@heroicons/react/24/solid";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
 import { useUserData } from "../../contexts/UserDataContext.jsx";
+import AddToPlaylistModal from "../PlaylistModal/index.jsx";
 
 export default function SongsList({ songs }) {
   const { setCurrentSong } = usePlayer();
   const { isFavourite, toggleFavourite } = useUserData();
+
+  const [playlistModalOpen, setPlaylistModalOpen] = React.useState(false);
+  const [selectedSong, setSelectedSong] = React.useState(null);
+
+  const handleOpenModal = (song) => {
+    setSelectedSong(song);
+    setPlaylistModalOpen(true);
+  };
 
   return (
     <div className="song-list-container">
@@ -37,7 +46,7 @@ export default function SongsList({ songs }) {
               </td>
               <td>{song.album}</td>
               <td>{song.artists}</td>
-              <td><PlusIcon className="mark-fav-icon"/></td>
+              <td><PlusIcon className="mark-fav-icon" onClick={() => handleOpenModal(song)}/></td>
               <td onClick={() => toggleFavourite(song)}>
                 {isFavourite(song.id) ? (
                   <SolidHeart className="remove-fav-icon" />
@@ -49,6 +58,14 @@ export default function SongsList({ songs }) {
           ))}
         </tbody>
       </table>
+
+      {/* Playlist Modal */}
+      {playlistModalOpen && selectedSong && (
+        <AddToPlaylistModal
+          song={selectedSong}
+          onClose={() => setPlaylistModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

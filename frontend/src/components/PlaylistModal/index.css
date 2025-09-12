@@ -1,0 +1,79 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+  }
+  
+  .modal-title {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .playlist-list {
+    margin: 1rem 0;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .playlist-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .playlist-item:hover {
+    background: #f6dbdc;
+  }
+  
+  .create-playlist {
+    margin-top: 1rem;
+    display: flex;
+  }
+  
+  .cancel {
+    margin-top: 1rem;
+    background: #ccc;
+    color: #333;
+  }
+  
+  .playlist-input {
+    width: 80%;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .playlist-modal-btn {
+    cursor: pointer;
+    width: 24px;
+    color: #FFC6C7;
+  }
+
+  .modal-title-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+  }
