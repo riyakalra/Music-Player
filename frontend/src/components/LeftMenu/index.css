@@ -71,9 +71,7 @@
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
-    position: fixed;
-    top: 50px;
-    left: 0;
+    margin-right: auto;
     z-index: 200;
   }
 

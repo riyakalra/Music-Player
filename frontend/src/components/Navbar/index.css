@@ -63,7 +63,8 @@
 
 .search-input {
   padding: 0.4rem 0.8rem;
-  width: 300px;
+  width: 280px;
+  max-width: 60vw;
   border: none;
   color: #666;
   font-size: 0.95rem;
@@ -99,21 +100,9 @@
     padding: 0.8rem 1rem;
   }
 
-  .desktop-search {
-    display: none;
-  }
-
-  .mobile-search {
-    display: flex;
-  }
-
   .search-input {
-    width: 120px;
+    width: 140px;
     font-size: 0.85rem;
-  }
-
-  .navbar-avatar {
-    display: none;
   }
 }
 
@@ -131,6 +120,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 18px;
+}
+
+.navbar-section.left {
+  display: none;
 }
 
 .result-image {

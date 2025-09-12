@@ -16,6 +16,9 @@
   .main-layout {
     flex-direction: column;
   }
+  .page-content {
+    padding: 0 2rem 0 2rem;
+  }
 }
 
 .auth-layout {
@@ -28,4 +31,11 @@
   height: 100vh;
   padding: 5rem;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .auth-layout {
+
+    padding: 2rem;
+  }
 }
