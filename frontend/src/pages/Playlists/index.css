@@ -1,0 +1,49 @@
+.home-title {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+}
+
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+
+.mood-card-container:first-of-type {
+  margin: 50px 0;
+}
+
+.mood-card-container {
+  margin: 30px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: flex-start;
+}
+
+.mood-header {
+  display: flex;
+  align-items: center;
+}
+
+.back-icon {
+  margin-right: 1rem;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: #444;
+}
+
+.play-icon {
+  margin-left: 12px;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  color: #ffc5c7;
+}
+
+h2 {
+  color: #444444;
+}
