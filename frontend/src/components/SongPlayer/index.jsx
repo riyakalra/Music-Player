@@ -7,10 +7,12 @@ import {
   HeartIcon,
   BackwardIcon,
   ForwardIcon,
+  PlusIcon,
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
 import { useUserData } from "../../contexts/UserDataContext.jsx";
+import AddToPlaylistModal from "../PlaylistModal";
 import "./index.css";
 
 export default function MusicPlayer() {
@@ -18,6 +20,7 @@ export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
 
   const { currentSong, playNextSong, playPreviousSong } = usePlayer();
   const { isFavourite, toggleFavourite } = useUserData();
@@ -138,6 +141,10 @@ export default function MusicPlayer() {
             onClick={() => toggleFavourite(currentSong)}
           />
         )}
+        <PlusIcon
+          className="action-icon"
+          onClick={() => setPlaylistModalOpen(true)}
+        />
         <button
           onClick={toggleMute}
           className="mute-btn"
@@ -150,6 +157,12 @@ export default function MusicPlayer() {
           )}
         </button>
       </div>
+      {playlistModalOpen && currentSong && (
+        <AddToPlaylistModal
+          song={currentSong}
+          onClose={() => setPlaylistModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

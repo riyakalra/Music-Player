@@ -98,6 +98,57 @@ export const UserDataProvider = ({ children }) => {
     }
   };
 
+  const removeSongFromPlaylist = async (playlistId, songId) => {
+    if (!user) return;
+    const playlist = playlists.find((pl) => pl.id === playlistId);
+    if (!playlist) return;
+
+    const updatedPlaylist = {
+      ...playlist,
+      songs: playlist.songs.filter((song) => song.id !== songId),
+    };
+
+    const updatedPlaylists = playlists.map((pl) =>
+      pl.id === playlistId ? updatedPlaylist : pl
+    );
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to remove song from playlist:", error);
+    }
+  };
+
+  const renamePlaylist = async (playlistId, newName) => {
+    if (!user) return;
+    const updatedPlaylists = playlists.map((pl) =>
+      pl.id === playlistId ? { ...pl, name: newName } : pl
+    );
+  
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to rename playlist:", error);
+    }
+  };
+  
+  const deletePlaylist = async (playlistId) => {
+    if (!user) return;
+    const updatedPlaylists = playlists.filter((pl) => pl.id !== playlistId);
+  
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to delete playlist:", error);
+    }
+  };
+
   return (
     <UserDataContext.Provider
       value={{
@@ -106,7 +157,10 @@ export const UserDataProvider = ({ children }) => {
         isFavourite,
         createPlaylist,
         addSongToPlaylist,
+        removeSongFromPlaylist,
         playlists,
+        renamePlaylist,
+        deletePlaylist
       }}
     >
       {children}

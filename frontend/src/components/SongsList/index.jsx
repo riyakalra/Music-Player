@@ -1,14 +1,18 @@
 import React from "react";
 import "./index.css";
-import { HeartIcon as OutlineHeart } from "@heroicons/react/24/outline";
+import {
+  HeartIcon as OutlineHeart,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { HeartIcon as SolidHeart, PlusIcon } from "@heroicons/react/24/solid";
 import { usePlayer } from "../../contexts/PlayerContext.jsx";
 import { useUserData } from "../../contexts/UserDataContext.jsx";
 import AddToPlaylistModal from "../PlaylistModal/index.jsx";
 
-export default function SongsList({ songs }) {
+export default function SongsList({ songs, showRemoveIcon = false, playlistId }) {
   const { setCurrentSong } = usePlayer();
-  const { isFavourite, toggleFavourite } = useUserData();
+  const { isFavourite, toggleFavourite, removeSongFromPlaylist } =
+    useUserData();
 
   const [playlistModalOpen, setPlaylistModalOpen] = React.useState(false);
   const [selectedSong, setSelectedSong] = React.useState(null);
@@ -31,6 +35,7 @@ export default function SongsList({ songs }) {
             <th>
               <OutlineHeart className="mark-fav-icon" />
             </th>
+            {showRemoveIcon && <th>Remove</th>}
           </tr>
         </thead>
         <tbody>
@@ -46,7 +51,12 @@ export default function SongsList({ songs }) {
               </td>
               <td>{song.album}</td>
               <td>{song.artists}</td>
-              <td><PlusIcon className="mark-fav-icon" onClick={() => handleOpenModal(song)}/></td>
+              <td>
+                <PlusIcon
+                  className="mark-fav-icon"
+                  onClick={() => handleOpenModal(song)}
+                />
+              </td>
               <td onClick={() => toggleFavourite(song)}>
                 {isFavourite(song.id) ? (
                   <SolidHeart className="remove-fav-icon" />
@@ -54,6 +64,14 @@ export default function SongsList({ songs }) {
                   <OutlineHeart className="mark-fav-icon" />
                 )}
               </td>
+              {showRemoveIcon && (
+                <td>
+                  <TrashIcon
+                    className="mark-fav-icon"
+                    onClick={() => removeSongFromPlaylist(playlistId, song.id)}
+                  />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

@@ -44,11 +44,16 @@
   text-align: center;
 }
 
-
 .song-table th:nth-child(6),
 .song-table td:nth-child(6) {
   width: 40px; 
 }
+
+
+.song-table td:nth-child(7) {
+  text-align: center;
+}
+
 
   .song-table thead {
     color: #333;
