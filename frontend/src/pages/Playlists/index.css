@@ -1,0 +1,41 @@
+.home-title {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+}
+
+/* responsive grid of playlists */
+.playlist-grid {
+  margin: 30px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: flex-start;
+}
+
+.mood-header {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.back-icon {
+  margin-right: 1rem;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: #444;
+}
+
+.play-icon {
+  margin-left: 12px;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  color: #ffc5c7;
+}
+
+h2 {
+  color: #444444;
+}

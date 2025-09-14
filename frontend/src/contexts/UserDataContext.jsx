@@ -18,10 +18,12 @@ export const UserDataProvider = ({ children }) => {
   const db = getFirestore();
 
   const [favourites, setFavourites] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
 
   useEffect(() => {
     if (!user) {
       setFavourites([]);
+      setPlaylists([]);
       return;
     }
 
@@ -29,8 +31,9 @@ export const UserDataProvider = ({ children }) => {
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
         setFavourites(docSnap.data().favourites || []);
+        setPlaylists(docSnap.data().playlists || []);
       } else {
-        setDoc(userDocRef, { favourites: [] });
+        setDoc(userDocRef, { favourites: [], playlists: [] });
       }
     });
 
@@ -53,8 +56,113 @@ export const UserDataProvider = ({ children }) => {
 
   const isFavourite = (songId) => favourites.some((song) => song.id === songId);
 
+  const createPlaylist = async (name, song = null) => {
+    if (!user) return;
+    const userDocRef = doc(db, "users", user.uid);
+
+    const newPlaylist = {
+      id: Date.now().toString(),
+      name,
+      songs: song ? [song] : [],
+    };
+
+    try {
+      await updateDoc(userDocRef, {
+        playlists: arrayUnion(newPlaylist),
+      });
+    } catch (error) {
+      console.error("Failed to create playlist:", error);
+    }
+  };
+
+  const addSongToPlaylist = async (playlistId, song) => {
+    if (!user) return;
+    const playlist = playlists.find((pl) => pl.id === playlistId);
+    if (!playlist) return;
+
+    const updatedPlaylist = {
+      ...playlist,
+      songs: [...playlist.songs, song],
+    };
+
+    const updatedPlaylists = playlists.map((pl) =>
+      pl.id === playlistId ? updatedPlaylist : pl
+    );
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to add song to playlist:", error);
+    }
+  };
+
+  const removeSongFromPlaylist = async (playlistId, songId) => {
+    if (!user) return;
+    const playlist = playlists.find((pl) => pl.id === playlistId);
+    if (!playlist) return;
+
+    const updatedPlaylist = {
+      ...playlist,
+      songs: playlist.songs.filter((song) => song.id !== songId),
+    };
+
+    const updatedPlaylists = playlists.map((pl) =>
+      pl.id === playlistId ? updatedPlaylist : pl
+    );
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to remove song from playlist:", error);
+    }
+  };
+
+  const renamePlaylist = async (playlistId, newName) => {
+    if (!user) return;
+    const updatedPlaylists = playlists.map((pl) =>
+      pl.id === playlistId ? { ...pl, name: newName } : pl
+    );
+  
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to rename playlist:", error);
+    }
+  };
+  
+  const deletePlaylist = async (playlistId) => {
+    if (!user) return;
+    const updatedPlaylists = playlists.filter((pl) => pl.id !== playlistId);
+  
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        playlists: updatedPlaylists,
+      });
+    } catch (error) {
+      console.error("Failed to delete playlist:", error);
+    }
+  };
+
   return (
-    <UserDataContext.Provider value={{ favourites, toggleFavourite, isFavourite }}>
+    <UserDataContext.Provider
+      value={{
+        favourites,
+        toggleFavourite,
+        isFavourite,
+        createPlaylist,
+        addSongToPlaylist,
+        removeSongFromPlaylist,
+        playlists,
+        renamePlaylist,
+        deletePlaylist
+      }}
+    >
       {children}
     </UserDataContext.Provider>
   );

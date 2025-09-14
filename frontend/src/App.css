@@ -1,6 +1,7 @@
 .App,
 .main-layout {
   background-color: #ffedef;
+  height: calc(100vh - 70px);
 }
 
 .page-content {

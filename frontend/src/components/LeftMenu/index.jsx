@@ -74,7 +74,7 @@ export default function LeftMenu() {
                 }
               >
                 <MusicalNoteIcon className="left-menu-icon" />
-                My Playlists
+                Your Playlists
               </NavLink>
             </li>
           </ul>
