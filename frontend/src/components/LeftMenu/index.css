@@ -86,3 +86,9 @@
     transform: translateX(0);
   }
 }
+
+.magic-playlist-btn {
+  background: none;
+  border: none;
+  text-align: left;
+}
