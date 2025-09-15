@@ -16,6 +16,7 @@
 @media (max-width: 768px) {
   .main-layout {
     flex-direction: column;
+    height: max-content;
   }
   .page-content {
     padding: 0 2rem 0 2rem;

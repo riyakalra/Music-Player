@@ -104,6 +104,11 @@
     width: 140px;
     font-size: 0.85rem;
   }
+
+  .navbar-section.left {
+    display: none;
+  }
+  
 }
 
 .search-results {
@@ -120,10 +125,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 18px;
-}
-
-.navbar-section.left {
-  display: none;
 }
 
 .result-image {
