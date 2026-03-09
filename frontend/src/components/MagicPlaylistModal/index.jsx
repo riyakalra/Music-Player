@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/solid";
 import { generateMagicPlaylist } from "../../utils/songsAPI";
-import { usePlayer } from "../../contexts/PlayerContext";
+import MagicPlaylistReviewModal from "../MagicPlaylistReviewModal";
 import toast from "react-hot-toast";
 import "./index.css";
 
@@ -9,7 +9,8 @@ export default function MagicPlaylistModal({ onClose }) {
   const MIN_LENGTH = 10;
   const [userInput, setUserInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const { setCurrentSong, setSongQueue } = usePlayer();
+  const [generatedSongs, setGeneratedSongs] = useState(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   const isValid = userInput.trim().length >= MIN_LENGTH;
 
@@ -26,14 +27,8 @@ export default function MagicPlaylistModal({ onClose }) {
         return;
       }
 
-      // Set the generated songs as the current queue and start playing
-      setSongQueue(songs);
-      if (songs.length > 0) {
-        setCurrentSong(songs[0]);
-      }
-      
-      toast.success(`Generated ${songs.length} songs! Playing now...`);
-      onClose();
+      setGeneratedSongs(songs);
+      setShowReviewModal(true);
     } catch (error) {
       console.error("Magic playlist generation error:", error);
       toast.error(error.message || "Failed to generate playlist. Please check your API key.");
@@ -42,16 +37,36 @@ export default function MagicPlaylistModal({ onClose }) {
     }
   };
 
+  const handleRetry = () => {
+    setShowReviewModal(false);
+    setGeneratedSongs(null);
+  };
+
+  const handleReviewClose = () => {
+    setShowReviewModal(false);
+    setGeneratedSongs(null);
+    onClose();
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && e.ctrlKey && isValid && !isGenerating) {
       handleGenerate();
     }
   };
 
+  if (showReviewModal && generatedSongs) {
+    return (
+      <MagicPlaylistReviewModal
+        songs={generatedSongs}
+        onRetry={handleRetry}
+        onClose={handleReviewClose}
+      />
+    );
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
         <div className="modal-header">
           <h3 className="modal-title">Create Magic Playlist</h3>
           <button 
@@ -64,7 +79,6 @@ export default function MagicPlaylistModal({ onClose }) {
           </button>
         </div>
 
-        {/* Input */}
         <p className="modal-subtitle">
           Describe your mood, genre, or vibe and let us generate a playlist for you.
         </p>
@@ -78,7 +92,6 @@ export default function MagicPlaylistModal({ onClose }) {
           disabled={isGenerating}
         />
 
-        {/* Info Row */}
         <div className="info-row">
           <InformationCircleIcon className="info-icon" />
           <span className="info-text">
@@ -86,7 +99,6 @@ export default function MagicPlaylistModal({ onClose }) {
           </span>
         </div>
 
-        {/* Loading State */}
         {isGenerating && (
           <div className="generating-state">
             <div className="spinner"></div>
@@ -94,7 +106,6 @@ export default function MagicPlaylistModal({ onClose }) {
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="modal-actions">
           <button
             className={`generate-button ${!isValid || isGenerating ? "disabled" : ""}`}
