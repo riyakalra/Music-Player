@@ -5,7 +5,9 @@
 
 export const API_ENDPOINTS = {
   SAAVN_PLAYLIST: 'https://saavnapi-nine.vercel.app/playlist/',
-  SAAVN_SEARCH: 'https://saavn.dev/api/search/songs',
+  SAAVN_SEARCH: 'https://jiosaavn-api.vercel.app/search', // Alternative JioSaavn search API
+  SAAVN_SEARCH_ALT: 'https://saavn.sumit.co/api/search', // Fallback search (returns page URLs only)
+  SAAVN_SONG_DETAILS: 'https://saavn.sumit.co/api/songs', // For fetching song details with media URL
 };
 
 export const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please try again.';

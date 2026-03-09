@@ -1,58 +1,81 @@
-/**
- * Song Data Transformers
- * Consistent data transformation for different API responses
- */
-
 import { SONG_FALLBACKS } from './constants';
 
-/**
- * Transform playlist API response to standardized song format
- * @param {Object} song - Raw song object from playlist API
- * @returns {Object} Standardized song object
- */
+const decodeHtmlEntities = (text) => {
+  if (!text || typeof text !== 'string') return text;
+  
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
 export const transformPlaylistSong = (song) => {
   if (!song || !song.media_url) return null;
 
   return {
     id: song.id || String(Date.now() + Math.random()),
-    title: song.song || SONG_FALLBACKS.TITLE,
-    album: song.album || SONG_FALLBACKS.ALBUM,
+    title: decodeHtmlEntities(song.song) || SONG_FALLBACKS.TITLE,
+    album: decodeHtmlEntities(song.album) || SONG_FALLBACKS.ALBUM,
     artists: formatArtists(song.singers || song.primary_artists),
     image: song.image || '',
     url: song.media_url,
   };
 };
 
-/**
- * Transform search API response to standardized song format
- * @param {Object} song - Raw song object from search API
- * @returns {Object} Standardized song object
- */
 export const transformSearchSong = (song) => {
   if (!song) return null;
 
-  // Find best quality download URL
-  const downloadUrl = findBestQualityUrl(song);
-  if (!downloadUrl) return null;
+  let downloadUrl = findBestQualityUrl(song);
 
-  // Find best quality image
-  const imageUrl = findBestQualityImage(song.image);
+  let imageUrl = null;
+  if (song.images && typeof song.images === 'object') {
+    imageUrl = song.images['500x500'] || song.images['150x150'] || song.images['50x50'] || null;
+  }
+  if (!imageUrl) {
+    imageUrl = findBestQualityImage(song.image);
+  }
+  if (!imageUrl && song.image) {
+    imageUrl = song.image;
+  }
 
+  const rawTitle = song.title || song.name || SONG_FALLBACKS.TITLE;
+  const title = decodeHtmlEntities(rawTitle);
+  
+  const rawAlbum = typeof song.album === 'string' 
+    ? song.album 
+    : (song.album?.name || SONG_FALLBACKS.ALBUM);
+  const album = decodeHtmlEntities(rawAlbum);
+  
+  let artists = SONG_FALLBACKS.ARTISTS;
+  if (song.more_info?.singers) {
+    artists = decodeHtmlEntities(song.more_info.singers);
+  } else if (song.description) {
+    const descParts = song.description.split('·');
+    if (descParts.length > 1) {
+      artists = decodeHtmlEntities(descParts.slice(1).join('·').trim());
+    }
+  } else if (song.primaryArtists) {
+    artists = decodeHtmlEntities(song.primaryArtists);
+  } else if (song.singers) {
+    artists = decodeHtmlEntities(song.singers);
+  } else if (song.artists?.primary) {
+    artists = formatArtistsFromArray(song.artists.primary);
+  }
+
+  const vlink = song.more_info?.vlink;
+  
   return {
     id: song.id || String(Date.now() + Math.random()),
-    title: song.name || SONG_FALLBACKS.TITLE,
-    album: song.album?.name || SONG_FALLBACKS.ALBUM,
-    artists: formatArtistsFromArray(song.artists?.primary),
+    title: title,
+    album: album,
+    artists: artists,
     image: imageUrl || '',
-    url: downloadUrl,
+    url: downloadUrl || vlink || '',
+    _needsMediaUrl: !downloadUrl && !vlink,
+    _pageUrl: song.perma_url || song.url,
+    _apiUrl: song.api_url?.song,
   };
 };
 
-/**
- * Format artists from string or array to consistent format
- * @param {string|Array} artists - Artists as string or array
- * @returns {string} Formatted artists string
- */
 const formatArtists = (artists) => {
   if (!artists) return SONG_FALLBACKS.ARTISTS;
   if (typeof artists === 'string') return artists;
@@ -60,11 +83,6 @@ const formatArtists = (artists) => {
   return SONG_FALLBACKS.ARTISTS;
 };
 
-/**
- * Format artists from array of artist objects
- * @param {Array} artists - Array of artist objects
- * @returns {string} Formatted artists string
- */
 const formatArtistsFromArray = (artists) => {
   if (!artists || !Array.isArray(artists) || artists.length === 0) {
     return SONG_FALLBACKS.ARTISTS;
@@ -72,15 +90,9 @@ const formatArtistsFromArray = (artists) => {
   return artists.map(artist => artist?.name || artist).filter(Boolean).join(', ');
 };
 
-/**
- * Find best quality download URL from song object
- * @param {Object} song - Song object with download URLs
- * @returns {string|null} Best quality URL or null
- */
 const findBestQualityUrl = (song) => {
   const qualityOrder = ['320kbps', '128kbps', '64kbps'];
   
-  // Try downloadUrl first (correct field name)
   if (song.downloadUrl && Array.isArray(song.downloadUrl)) {
     for (const quality of qualityOrder) {
       const urlObj = song.downloadUrl.find(dl => dl.quality === quality);
@@ -88,7 +100,6 @@ const findBestQualityUrl = (song) => {
     }
   }
   
-  // Fallback to downloadURL (typo in some responses)
   if (song.downloadURL && Array.isArray(song.downloadURL)) {
     for (const quality of qualityOrder) {
       const urlObj = song.downloadURL.find(dl => dl.quality === quality);
@@ -99,15 +110,9 @@ const findBestQualityUrl = (song) => {
   return null;
 };
 
-/**
- * Find best quality image from image array
- * @param {Array} images - Array of image objects
- * @returns {string|null} Best quality image URL or null
- */
 const findBestQualityImage = (images) => {
   if (!images || !Array.isArray(images)) return null;
   
-  // Prefer 50x50, then 150x150, then any available
   const qualityOrder = ['50x50', '150x150', '500x500'];
   
   for (const quality of qualityOrder) {
@@ -115,7 +120,6 @@ const findBestQualityImage = (images) => {
     if (img?.url) return img.url;
   }
   
-  // Return first available image if no quality match
   return images[0]?.url || null;
 };
 
