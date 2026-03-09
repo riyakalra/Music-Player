@@ -120,7 +120,7 @@ export default function Navbar() {
                         <div className="result-info">
                           <div className="result-title">{song.title}</div>
                           <div className="result-artists">
-                            {`${song.album} | ${song.artists.join(", ")}`}
+                            {`${song.album} | ${song.artists}`}
                           </div>
                         </div>
                       </div>

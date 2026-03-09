@@ -18,11 +18,18 @@ export default function Home() {
   useEffect(() => {
     if (selectedPlaylist) {
       setLoading(true);
-      fetchSongsByPlaylist(selectedPlaylist).then((data) => {
-        setSongs(data);
-        setSongQueue(data);
-        setLoading(false);
-      });
+      fetchSongsByPlaylist(selectedPlaylist)
+        .then((data) => {
+          setSongs(data);
+          setSongQueue(data);
+        })
+        .catch((error) => {
+          console.error("Failed to load playlist:", error);
+          setSongs([]);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [selectedPlaylist, setSongQueue]);
 

@@ -13,11 +13,18 @@ export default function Explore() {
 
   useEffect(() => {
     setLoading(true);
-    fetchSongsByPlaylist("Best Of Dance").then((data) => {
-      setSongs(data);
-      setSongQueue(data);
-      setLoading(false);
-    });
+    fetchSongsByPlaylist("Best Of Dance")
+      .then((data) => {
+        setSongs(data);
+        setSongQueue(data);
+      })
+      .catch((error) => {
+        console.error("Failed to load explore songs:", error);
+        setSongs([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [setSongQueue]);
 
   return (

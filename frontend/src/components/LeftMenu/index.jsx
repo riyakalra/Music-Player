@@ -5,12 +5,19 @@ import {
   GlobeAltIcon,
   MusicalNoteIcon,
   Bars3Icon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import "./index.css";
 import { useState } from "react";
+import MagicPlaylistModal from "../MagicPlaylistModal";
 
 export default function LeftMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMagicModalOpen, setIsMagicModalOpen] = useState(false);
+
+  const closeMagicModal = () => {
+    setIsMagicModalOpen(false);
+  };
 
   return (
     <>
@@ -77,9 +84,19 @@ export default function LeftMenu() {
                 Your Playlists
               </NavLink>
             </li>
+            <li>
+              <button
+                className="left-menu-item magic-playlist-btn"
+                onClick={() => setIsMagicModalOpen(true)}
+              >
+                <SparklesIcon className="left-menu-icon" />
+                Create Magic Playlist
+              </button>
+            </li>
           </ul>
         </div>
       </nav>
+      {isMagicModalOpen && <MagicPlaylistModal onClose={closeMagicModal} />}
     </>
   );
 }

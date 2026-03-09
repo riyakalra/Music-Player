@@ -39,6 +39,24 @@
   border-right: 8px solid #efc9cb;
 }
 
+.magic-playlist-btn {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 1rem 3rem;
+  color: #606060;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.magic-playlist-btn:hover {
+  background-color: #efc9cb;
+}
+
 .left-menu-section {
   margin-bottom: 2rem;
 }
