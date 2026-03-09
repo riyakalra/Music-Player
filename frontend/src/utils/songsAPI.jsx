@@ -1,46 +1,50 @@
+/**
+ * Songs API Service
+ * High-level API functions for fetching songs by playlist name and searching
+ */
+
 import { allPlaylists } from "./playlistData";
+import { fetchPlaylistSongs, searchSongs as searchSongsAPI } from "../api/saavnAPI";
 
-export const fetchSongsByPlaylist = async (mood) => {
-  const playlistUrl = allPlaylists.find((playlist) => playlist.name === mood)?.url;
-  if (!playlistUrl) return [];
+/**
+ * Fetch songs by playlist name (mood)
+ * @param {string} playlistName - Name of the playlist from playlistData
+ * @returns {Promise<Array>} Array of standardized song objects
+ */
+export const fetchSongsByPlaylist = async (playlistName) => {
+  if (!playlistName) {
+    return [];
+  }
+
+  const playlist = allPlaylists.find((p) => p.name === playlistName);
+  if (!playlist || !playlist.url) {
+    console.warn(`Playlist "${playlistName}" not found`);
+    return [];
+  }
+
   try {
-    const res = await fetch(
-      `https://saavnapi-nine.vercel.app/playlist/?query=${encodeURIComponent(playlistUrl)}`
-    );
-    const { songs } = await res.json();
-
-    if (!songs || !Array.isArray(songs)) return [];
-    return songs.map((song) => ({
-      id: song.id,
-      title: song.song || 'Information not available' ,
-      album: song.album || 'Information not available',
-      artists: song.singers || song.primary_artists || 'Information not available',
-      image: song.image,
-      url: song.media_url
-    })).filter(s => s.url); 
-  } catch (err) {
-    console.error("Error fetching songs:", err);
+    return await fetchPlaylistSongs(playlist.url);
+  } catch (error) {
+    console.error(`Error fetching songs for playlist "${playlistName}":`, error);
     return [];
   }
 };
 
+/**
+ * Search for songs by query
+ * @param {string} query - Search query
+ * @returns {Promise<Array>} Array of standardized song objects
+ */
 export const searchSongs = async (query) => {
-  try {
-    const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}`);
-    const fetchedData = await res.json();
-    if (!fetchedData || !fetchedData.data.results || !Array.isArray(fetchedData.data.results)) return [];
-
-    return fetchedData.data.results.map((song) => ({
-      id: song.id,
-      title: song.name || 'Information not available' ,
-      album: song.album.name || 'Information not available',
-      artists: song.artists.primary.map(artist => artist.name)  || 'Information not available',
-      image: song.image.find(img => img.quality === '50x50')?.url,
-      url: song.downloadUrl.find(dl => dl.quality === '320kbps')?.url || song.downloadURL.find(dl => dl.quality === '128kbps')?.url || song.downloadURL.find(dl => dl.quality === '64kbps')?.url
-    })).filter(s => s.url); 
-  } catch (err) {
-    console.error("Error fetching songs:", err);
+  if (!query || !query.trim()) {
     return [];
   }
-}
+
+  try {
+    return await searchSongsAPI(query);
+  } catch (error) {
+    console.error("Error searching songs:", error);
+    return [];
+  }
+};
 
